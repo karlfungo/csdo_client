@@ -1,0 +1,33 @@
+::ng-deep .p-datatable-thead tr th.p-datatable-sortable-column {
+  background-color: rgb(251, 44, 54) !important;
+  color: white !important;
+}
+
+::ng-deep .p-datatable-thead > tr > th {
+  background-color: rgb(251, 44, 54) !important;
+  color: white !important;
+}
+::ng-deep .p-datatable-thead tr th.p-datatable-column-sorted {
+  background-color: rgb(251, 44, 54) !important;
+  color: white !important;
+}
+
+::ng-deep .p-datatable-thead tr th.p-datatable-sortable-column:hover {
+  background-color: rgb(251, 44, 54) !important;
+  color: white !important;
+}
+
+::ng-deep .p-dialog {
+  border: none;
+}
+
+::ng-deep .p-dialog-close-button {
+  color: white !important;
+}
+::ng-deep .p-dialog-close-button:hover {
+  color: rgb(251, 44, 54) !important;
+}
+::ng-deep .p-dialog-header {
+  background-color: rgb(251, 44, 54) !important;
+  color: white !important;
+}

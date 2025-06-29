@@ -1,0 +1,162 @@
+<div class="container flex flex-col gap-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-semibold text-gray-700">Records</h1>
+  </div>
+
+  <hr />
+
+  <div class="control flex gap-4">
+    <!-- SDG Dropdown -->
+    <div class="w-[20rem]">
+      <label for="sdgDropdown" class="block font-semibold text-gray-700 mb-2">
+        Select SDG
+      </label>
+      <select
+        id="sdgDropdown"
+        [(ngModel)]="selectedSdg"
+        (change)="onSdgOrYearChange()"
+        class="w-full border border-gray-300 px-3 py-1 rounded text-sm"
+      >
+        <option *ngFor="let sdg of sdgsList" [value]="sdg.sdg_id">
+          {{ sdg.sdg_no }} - {{ sdg.sdg_name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Year Dropdown -->
+    <div class="w-[12rem]">
+      <label for="yearDropdown" class="block font-semibold text-gray-700 mb-2">
+        Select Year
+      </label>
+      <select
+        id="yearDropdown"
+        [(ngModel)]="selectedYear"
+        (change)="onSdgOrYearChange()"
+        class="w-full border border-gray-300 px-3 py-1 rounded text-sm"
+      >
+        <option *ngFor="let year of yearList" [value]="year">{{ year }}</option>
+      </select>
+    </div>
+    <!-- SDO Officer Dropdown -->
+    <div class="w-[20rem]">
+      <label for="sdoDropdown" class="block font-semibold text-gray-700 mb-2">
+        Select SDO Officer
+      </label>
+      <select
+        id="sdoDropdown"
+        [(ngModel)]="selectedSdoUser"
+        (ngModelChange)="onSdoChange($event)"
+        class="w-full border border-gray-300 px-3 py-1 rounded text-sm"
+      >
+        <option [ngValue]="null" disabled selected>Select officer</option>
+        <option *ngFor="let sdo of sdoUsers" [ngValue]="sdo.user_id">
+          {{ sdo.first_name }} {{ sdo.last_name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="body" *ngIf="recordId !== null">
+    <table
+      class="min-w-full table-auto border border-collapse border-gray-300 text-sm"
+    >
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="border p-2 w-[10%]">No.</th>
+          <th class="border p-2" colspan="2">Description</th>
+          <th class="border p-2 w-[10%]">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let section of instrument.sections">
+          <tr class="bg-blue-50 font-semibold">
+            <td class="border p-2">{{ section.no }}</td>
+            <td class="border p-2" colspan="3">{{ section.subtitle }}</td>
+          </tr>
+
+          <ng-container *ngFor="let content of section.contents">
+            <tr class="bg-green-50 font-medium">
+              <td class="border p-2 pl-6">{{ content.no }}</td>
+              <td class="border p-2" colspan="2">{{ content.content }}</td>
+              <td class="border p-2 text-center">
+                {{ evaluateFormula(content.no) }}
+              </td>
+            </tr>
+
+            <tr *ngFor="let cell of content.cells">
+              <td class="border p-2"></td>
+              <td class="border p-2 text-sm font-medium text-gray-700">
+                {{ cell.question }}
+              </td>
+              <td class="border p-2" colspan="2">
+                <span class="block px-2 py-1"
+                  >{{ getFieldValue(cell.sub_id) }}</span
+                >
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+
+        <tr class="bg-green-50 font-medium">
+          <td colspan="2" class="border p-2"></td>
+          <td class="border p-2">Total</td>
+          <td class="border p-2 text-center">{{ currentTotal }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button
+      *ngIf="currentStatus !== 'approved'"
+      pButton
+      label="Check"
+      icon="pi pi-pencil"
+      class="p-button-sm p-button-outlined"
+      (click)="openStatusModal(recordId!, currentStatus)"
+    ></button>
+  </div>
+  <div
+    *ngIf="recordId === null "
+    class="border border-red-500 rounded py-10 text-red-500 text-md text-center mt-4"
+  >
+    ⚠️ No instrument data available for the selected SDG, year, and officer.
+  </div>
+</div>
+
+<p-dialog
+  header="Update Record Status"
+  [(visible)]="showStatusModal"
+  [modal]="true"
+  [style]="{ width: '30vw' }"
+  [closable]="true"
+  [dismissableMask]="true"
+>
+  <div class="mb-4">
+    <label for="statusDropdown" class="block mb-2 font-medium"
+      >Select Status</label
+    >
+    <p-dropdown
+      inputId="statusDropdown"
+      [options]="statusOptions"
+      [(ngModel)]="selectedStatus"
+      placeholder="Choose status"
+      optionLabel="label"
+      optionValue="value"
+      class="w-full"
+    ></p-dropdown>
+  </div>
+
+  <div class="flex justify-end gap-2 mt-4">
+    <button
+      pButton
+      label="Cancel"
+      class="p-button-secondary"
+      (click)="showStatusModal = false"
+    ></button>
+    <button
+      pButton
+      label="Update"
+      class="p-button-success"
+      (click)="updateRecordStatus()"
+    ></button>
+  </div>
+</p-dialog>

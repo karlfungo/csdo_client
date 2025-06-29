@@ -1,0 +1,242 @@
+<div class="container flex flex-col gap-5">
+  <div class="header">
+    <h1 class="text-3xl poppins-medium">Users</h1>
+  </div>
+  <hr />
+  <div class="control flex justify-between">
+    <input
+      type="text"
+      placeholder="Search user..."
+      [(ngModel)]="keyword"
+      (ngModelChange)="onKeywordChange()"
+      class="border px-2 py-3 rounded w-[20rem] text-sm poppins-regular"
+    />
+    <button
+      class="bg-red-500 text-sm text-white px-3 rounded-sm poppins-medium cursor-pointer"
+      (click)="handleAddUserDialog()"
+    >
+      <i class="pi pi-plus"></i> User
+    </button>
+  </div>
+  <div class="body">
+    <p-table
+      [value]="users"
+      showGridlines
+      [paginator]="true"
+      [rows]="pageSize"
+      [first]="pageNo"
+      [totalRecords]="totalRecords"
+      [rowsPerPageOptions]="[10, 20, 30]"
+      (onPage)="onPageChange($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="first_name" class="poppins-regular text-xs">
+            First Name <p-sortIcon field="first_name" class="float-end" />
+          </th>
+          <th pSortableColumn="middle_name" class="poppins-regular text-xs">
+            Middle Name <p-sortIcon field="middle_name" class="float-end" />
+          </th>
+          <th pSortableColumn="last_name" class="poppins-regular text-xs">
+            Last Name <p-sortIcon field="last_name" class="float-end" />
+          </th>
+          <th pSortableColumn="email_address" class="poppins-regular text-xs">
+            Email <p-sortIcon field="email_address" class="float-end" />
+          </th>
+          <th pSortableColumn="contact_number" class="poppins-regular text-xs">
+            Contact <p-sortIcon field="contact_number" class="float-end" />
+          </th>
+          <th pSortableColumn="campus_name" class="poppins-regular text-xs">
+            Campus <p-sortIcon field="campus_name" class="float-end" />
+          </th>
+          <th pSortableColumn="role" class="poppins-regular text-xs">
+            Role <p-sortIcon field="role" class="float-end" />
+          </th>
+          <th class="bg-red-500 poppins-regular">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+        <tr>
+          <td
+            [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-xs', 'poppins-regular']"
+          >
+            {{ user.first_name }}
+          </td>
+          <td
+            [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-xs', 'poppins-regular']"
+          >
+            {{ user.middle_name || '-' }}
+          </td>
+          <td
+            [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-xs', 'poppins-regular']"
+          >
+            {{ user.last_name }}
+          </td>
+          <td
+            [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-xs', 'poppins-regular']"
+          >
+            {{ user.email_address }}
+          </td>
+          <td
+            [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-xs', 'poppins-regular']"
+          >
+            {{ user.contact_number || '-' }}
+          </td>
+          <td
+            [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-xs', 'poppins-regular']"
+          >
+            {{ user.campus_name }}
+          </td>
+          <td
+            [ngClass]="[
+    rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]',
+    'text-xs',
+    'poppins-regular'
+  ]"
+          >
+            {{ user.role === 'csdo' ? 'CSD Officer' : 'SD Officer' }}
+          </td>
+
+          <td
+            [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-xs', 'poppins-regular']"
+          >
+            <button
+              (click)="onEditUser(user)"
+              class="text-green-500 hover:text-green-600 mr-3"
+              title="Edit"
+            >
+              <i class="pi pi-pencil"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-dialog
+  [header]="editMode ? 'Edit User' : 'Add User'"
+  [modal]="true"
+  [(visible)]="showAddUserDialog"
+  [style]="{ width: '35rem' }"
+  draggable="false"
+>
+  <form [formGroup]="userForm" (ngSubmit)="submitUser()">
+    <span class="p-text-secondary block mb-8">
+      Please fill out the user details.
+    </span>
+
+    <!-- First Name -->
+    <div class="flex items-center gap-4 mb-4">
+      <label for="first_name" class="font-semibold w-28">First Name</label>
+      <input
+        type="text"
+        id="first_name"
+        class="flex-auto border px-2 py-1 rounded text-sm"
+        formControlName="first_name"
+        placeholder="Enter first name"
+        autocomplete="off"
+      />
+    </div>
+
+    <!-- Middle Name -->
+    <div class="flex items-center gap-4 mb-4">
+      <label for="middle_name" class="font-semibold w-28">Middle Name</label>
+      <input
+        type="text"
+        id="middle_name"
+        class="flex-auto border px-2 py-1 rounded text-sm"
+        formControlName="middle_name"
+        placeholder="Enter middle name (optional)"
+        autocomplete="off"
+      />
+    </div>
+
+    <!-- Last Name -->
+    <div class="flex items-center gap-4 mb-4">
+      <label for="last_name" class="font-semibold w-28">Last Name</label>
+      <input
+        type="text"
+        id="last_name"
+        class="flex-auto border px-2 py-1 rounded text-sm"
+        formControlName="last_name"
+        placeholder="Enter last name"
+        autocomplete="off"
+      />
+    </div>
+
+    <!-- Email Address -->
+    <div class="flex items-center gap-4 mb-4">
+      <label for="email_address" class="font-semibold w-28">Email</label>
+      <input
+        type="email"
+        id="email_address"
+        class="flex-auto border px-2 py-1 rounded text-sm"
+        formControlName="email_address"
+        placeholder="Enter email address"
+        autocomplete="off"
+      />
+    </div>
+
+    <!-- Contact Number -->
+    <div class="flex items-center gap-4 mb-4">
+      <label for="contact_number" class="font-semibold w-28">Contact No.</label>
+      <input
+        type="text"
+        id="contact_number"
+        class="flex-auto border px-2 py-1 rounded text-sm"
+        formControlName="contact_number"
+        placeholder="Enter contact number (optional)"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="flex items-center gap-4 mb-4">
+      <label for="role" class="font-semibold w-28">Role</label>
+      <select
+        id="role"
+        class="flex-auto border px-2 py-1 rounded text-sm"
+        formControlName="role"
+      >
+        <option value="sdo" selected>SDO</option>
+        <option value="csdo">CSDO</option>
+      </select>
+    </div>
+    <!-- Campus (shown only if role is 'sdo') -->
+    <div
+      class="flex items-center gap-4 mb-6"
+      *ngIf="userForm.get('role')?.value === 'sdo'"
+    >
+      <label for="campus_id" class="font-semibold w-28">Campus</label>
+      <select
+        id="campus_id"
+        class="flex-auto border px-2 py-1 rounded text-sm"
+        formControlName="campus_id"
+      >
+        <option value="">-- Select Campus --</option>
+        <option *ngFor="let c of campuses" [value]="c.campus_id">
+          {{ c.campus_name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-end gap-2">
+      <button
+        type="button"
+        class="px-4 py-2 text-sm border border-gray-300 rounded bg-white hover:bg-gray-100"
+        (click)="resetFormState()"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="px-4 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-600"
+        [disabled]="userForm.invalid"
+      >
+        {{ editMode ? 'Update' : 'Save' }}
+      </button>
+    </div>
+  </form>
+</p-dialog>

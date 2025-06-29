@@ -1,0 +1,116 @@
+<div class="container flex flex-col gap-5">
+  <div class="header">
+    <h1 class="text-3xl poppins-medium">Dashboard</h1>
+  </div>
+  <hr />
+
+  <div class="flex gap-5 poppins-regular">
+    <!-- Campus Dropdown -->
+    <div class="w-64">
+      <label for="campus" class="block mb-2 font-medium">Select Campus</label>
+      <select
+        id="campus"
+        [(ngModel)]="selectedCampus"
+        (ngModelChange)="onCampusChange($event)"
+        class="w-full border border-gray-300 rounded px-3 py-2"
+      >
+        <option *ngFor="let campus of campusOptions" [value]="campus.campus_id">
+          {{ campus.campus_name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Year Dropdown -->
+    <div class="w-64">
+      <label for="year" class="block mb-2 font-medium">Select Year</label>
+      <select
+        id="year"
+        [(ngModel)]="selectedYear"
+        (ngModelChange)="onYearChange($event)"
+        class="w-full border border-gray-300 rounded px-3 py-2"
+      >
+        <option *ngFor="let year of yearOptions" [value]="year">
+          {{ year }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="flex gap-2">
+    <!-- Pie Chart -->
+    <div class="bg-white shadow-md rounded p-4 h-[30rem] w-[40%]">
+      <h2 class="text-lg font-semibold mb-4 poppins-semibold">
+        Submission Status
+      </h2>
+      <div style="width: 100%; height: 100%" class="px-10 flex items-center">
+        <p-chart
+          type="pie"
+          [data]="statusChartData"
+          [options]="chartOptions"
+          style="width: 100%; height: 100%"
+        ></p-chart>
+      </div>
+    </div>
+
+    <!-- Bar Chart -->
+    <div class="bg-white shadow-md rounded p-4 h-[30rem] w-[60%]">
+      <h2 class="text-lg font-semibold mb-4 poppins-semibold">
+        Approved Records per SDG
+      </h2>
+      <div style="width: 100%; height: 100%">
+        <p-chart
+          type="bar"
+          [data]="sdgChartData"
+          [options]="barChartOptions"
+          style="width: 100%; height: 100%"
+        ></p-chart>
+      </div>
+    </div>
+  </div>
+  <div class="flex gap-2">
+    <div class="bg-white shadow-md rounded p-4 h-[30rem] w-[75%]">
+      <h2 class="text-lg poppins-semibold mb-4 text-center">SDG Scores</h2>
+      <p-chart
+        type="bar"
+        [data]="sdgScoreData"
+        [options]="sdgScoreOptions"
+        styleClass="w-full h-full"
+      ></p-chart>
+    </div>
+    <div
+      class="bg-white shadow-md rounded p-4 h-[30rem] w-[25%] flex flex-col overflow-y-auto"
+    >
+      <h2 class="text-lg poppins-semibold mb-4 text-center">Select SDG</h2>
+
+      <select
+        id="sdg"
+        [(ngModel)]="selectedSdgId"
+        (ngModelChange)="onSdgChange($event)"
+        class="w-full border border-gray-300 rounded px-3 py-2 mb-3"
+      >
+        <option [value]="null">-- All SDGs --</option>
+        <option *ngFor="let sdg of sdgList" [value]="sdg.sdg_id">
+          {{ sdg.sdg_no }} - {{ sdg.sdg_name }}
+        </option>
+      </select>
+
+      <hr class="my-3" />
+
+      <div class="flex-1 overflow-y-auto">
+        <h3 class="text-md font-semibold mb-2">Campus Rankings</h3>
+
+        <div *ngFor="let campus of rankings" class="mb-4">
+          <div class="text-sm font-medium">{{ campus.campus_name }}</div>
+          <div class="w-full bg-gray-200 rounded h-4 mt-1">
+            <div
+              class="bg-green-500 h-4 rounded"
+              [style.width.%]="getProgressBarWidth(campus.total_score)"
+            ></div>
+          </div>
+          <div class="text-xs text-gray-600 mt-1">
+            Score: {{ campus.total_score }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

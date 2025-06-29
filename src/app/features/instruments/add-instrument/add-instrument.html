@@ -1,0 +1,214 @@
+<div class="container flex flex-col gap-6 p-6 bg-white rounded shadow">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-semibold text-gray-700">Records</h1>
+    <button
+      class="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-1 rounded"
+      [routerLink]="'/instruments'"
+    >
+      <i class="pi pi-arrow-left"></i> Return
+    </button>
+  </div>
+
+  <hr />
+
+  <!-- SDG Dropdown -->
+  <div>
+    <label for="sdgDropdown" class="block font-semibold text-gray-700 mb-2">
+      Select SDG
+    </label>
+    <select
+      id="sdgDropdown"
+      [(ngModel)]="selectedSdg"
+      class="w-full border border-gray-300 px-3 py-1 rounded text-sm"
+    >
+      <option value="" disabled selected>Select an SDG</option>
+      <option *ngFor="let sdg of sdgsList" [value]="sdg.sdg_id">
+        {{ sdg.sdg_no }} - {{ sdg.sdg_name }}
+      </option>
+    </select>
+  </div>
+
+  <!-- SDG Sections -->
+  <div>
+    <label class="block font-semibold text-gray-700 mb-4">SDG Sections</label>
+
+    <div
+      *ngFor="let section of sdgSections; let i = index"
+      class="border border-gray-300 rounded p-4 mb-6 bg-gray-50"
+    >
+      <!-- Section Header -->
+      <div class="grid grid-cols-12 gap-4 mb-4">
+        <div class="col-span-2">
+          <input
+            type="text"
+            [(ngModel)]="section.no"
+            class="w-full border px-3 py-1 rounded text-sm"
+            placeholder="Section No."
+            name="sectionNo{{ i }}"
+          />
+        </div>
+        <div class="col-span-10">
+          <input
+            type="text"
+            [(ngModel)]="section.subtitle"
+            class="w-full border px-3 py-1 rounded text-sm"
+            placeholder="Subtitle"
+            name="sectionSubtitle{{ i }}"
+          />
+        </div>
+        <div class="col-span-1 text-right">
+          <button
+            (click)="removeSection(i)"
+            class="text-red-600 hover:underline text-xs"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+
+      <!-- Contents -->
+      <div
+        *ngFor="let content of section.contents; let j = index"
+        class="mb-4 bg-white border rounded p-3"
+      >
+        <div class="grid grid-cols-12 gap-3 mb-3">
+          <div class="col-span-2">
+            <input
+              type="text"
+              [(ngModel)]="content.no"
+              class="w-full border px-2 py-1 rounded text-sm"
+              placeholder="Content No."
+              name="contentNo{{ i }}_{{ j }}"
+            />
+          </div>
+          <div class="col-span-9">
+            <input
+              type="text"
+              [(ngModel)]="content.content"
+              class="w-full border px-2 py-1 rounded text-sm"
+              placeholder="Content Description"
+              name="contentDesc{{ i }}_{{ j }}"
+            />
+          </div>
+          <div class="col-span-1 text-right">
+            <button
+              (click)="removeContent(i, j)"
+              class="text-red-500 hover:underline text-xs"
+            >
+              Remove
+            </button>
+          </div>
+          <div class="col-span-12 mt-2">
+            <input
+              type="text"
+              [(ngModel)]="content.formula"
+              class="w-full border px-2 py-1 rounded text-sm"
+              placeholder="Formula (e.g., A + B / C)"
+              name="contentFormula{{ i }}_{{ j }}"
+            />
+          </div>
+        </div>
+
+        <!-- Cells -->
+        <div
+          *ngFor="let cell of content.cells; let k = index"
+          class="border rounded p-3 mb-2 bg-gray-100"
+        >
+          <div class="grid grid-cols-12 gap-3 mb-2">
+            <div class="col-span-2">
+              <input
+                type="text"
+                [(ngModel)]="cell.sub_id"
+                class="border px-2 py-1 w-full rounded text-sm"
+                placeholder="Sub ID (e.g., 1.1.1.1)"
+                name="subId{{i}}_{{j}}_{{k}}"
+              />
+            </div>
+            <div class="col-span-7">
+              <input
+                type="text"
+                [(ngModel)]="cell.question"
+                class="w-full border px-2 py-1 rounded text-sm"
+                placeholder="Enter Question"
+              />
+            </div>
+            <div class="col-span-2">
+              <select
+                [(ngModel)]="cell.type"
+                class="w-full border px-2 py-1 rounded text-sm"
+              >
+                <option value="text">Text</option>
+                <option value="multiple">Multiple Choice</option>
+              </select>
+            </div>
+            <div class="col-span-1 text-right">
+              <button
+                (click)="removeCell(i, j, k)"
+                class="text-red-500 hover:underline text-xs"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+
+          <!-- Multiple Choice Options -->
+          <div *ngIf="cell.type === 'multiple'">
+            <div
+              *ngFor="let opt of cell.options; let o = index"
+              class="flex items-center gap-2 mb-1"
+            >
+              <input
+                type="text"
+                [(ngModel)]="cell.options[o]"
+                placeholder="Option {{ o + 1 }}"
+                class="w-full border px-2 py-1 rounded text-sm"
+              />
+              <button
+                (click)="removeOption(i, j, k, o)"
+                class="text-red-500 hover:underline text-xs"
+              >
+                Remove
+              </button>
+            </div>
+            <button
+              (click)="addOption(i, j, k)"
+              class="text-blue-500 hover:underline text-xs"
+            >
+              + Add Option
+            </button>
+          </div>
+        </div>
+
+        <button
+          (click)="addCell(i, j)"
+          class="mt-2 bg-purple-600 hover:bg-purple-700 text-white text-xs px-3 py-1 rounded"
+        >
+          + Add Cell
+        </button>
+      </div>
+
+      <button
+        (click)="addContent(i)"
+        class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-1 rounded"
+      >
+        + Add Content
+      </button>
+    </div>
+
+    <!-- Add Section Button -->
+    <button
+      (click)="addSection()"
+      class="bg-green-600 hover:bg-green-700 text-white text-sm px-5 py-1 rounded"
+    >
+      + Add Section
+    </button>
+  </div>
+</div>
+<!-- Submit Button -->
+<button
+  (click)="submitInstrument()"
+  class="mt-6 bg-red-600 hover:bg-red-700 text-white text-sm px-6 py-2 rounded"
+>
+  Submit Instrument
+</button>

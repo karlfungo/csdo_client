@@ -1,0 +1,62 @@
+<section class="login__section h-screen">
+  <div class="flex h-full">
+    <div class="login__form__container w-2/5 h-full p-10">
+      <form
+        class="h-full"
+        [formGroup]="loginCredentials"
+        (ngSubmit)="onSubmit()"
+      >
+        <div class="form__header">
+          <h1 class="text-2xl poppins-medium">
+            Center for Sustainable Development Office
+          </h1>
+          <h2 class="text-xl poppins-regular text-red-500">
+            Batangas State University - TNEU
+          </h2>
+          <h3 class="text-lg poppins-medium my-10">Welcome, CSD Officer</h3>
+        </div>
+
+        <div class="form__body">
+          <div class="input__group flex flex-col mb-4">
+            <label for="email_address" class="text-base poppins-medium">
+              Email Address
+            </label>
+            <input
+              id="email_address"
+              name="email_address"
+              type="email"
+              formControlName="email_address"
+              class="border py-2 px-3 text-base outline-none focus:outline-outline"
+            />
+          </div>
+
+          <div class="input__group flex flex-col mb-4">
+            <label for="password" class="text-base poppins-medium">
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              formControlName="password"
+              class="border py-2 px-3 text-base outline-none focus:outline-outline"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="mt-4 px-3 py-2 bg-red-500 text-white poppins-medium w-full cursor-pointer"
+          >
+            Login
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Updated Right Side with Background Image -->
+    <div
+      class="w-3/5 h-full bg-cover bg-center"
+      style="background-image: url('/assets/login-cover.jpg')"
+    ></div>
+  </div>
+</section>

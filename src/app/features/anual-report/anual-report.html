@@ -1,0 +1,157 @@
+<div class="container flex flex-col gap-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-semibold text-gray-700">Records</h1>
+  </div>
+
+  <hr />
+  <div class="control flex justify-between items-center">
+    <div class="flex gap-4 items-center">
+      <!-- Search Input -->
+      <input
+        type="text"
+        placeholder="Search Annual Reports..."
+        [(ngModel)]="keyword"
+        (ngModelChange)="onKeywordChange()"
+        class="border px-2 py-3 rounded w-[20rem] text-sm poppins-regular"
+      />
+
+      <!-- Year Filter -->
+      <select
+        class="border px-2 py-3 rounded text-sm poppins-regular"
+        [(ngModel)]="selectedYear"
+        (change)="onYearChange()"
+      >
+        <option value="">All Years</option>
+        <option *ngFor="let year of yearOptions" [value]="year">
+          {{ year }}
+        </option>
+      </select>
+    </div>
+
+    <!-- <button
+      class="bg-red-500 text-sm text-white px-3 rounded-sm poppins-medium cursor-pointer"
+      (click)="showUploadModal = true"
+    >
+      <i class="pi pi-plus"></i> Annual Report
+    </button> -->
+  </div>
+
+  <p-table
+    [value]="annual_reports"
+    showGridlines
+    [paginator]="true"
+    [rows]="pageSize"
+    [first]="pageNo"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="[10, 20, 30]"
+    (onPage)="onPageChange($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="poppins-regular">Report ID</th>
+        <th class="poppins-regular">Title</th>
+        <th class="poppins-regular">Year</th>
+        <th class="poppins-regular">Uploaded By</th>
+        <th class="poppins-regular">File</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-report let-rowIndex="rowIndex">
+      <tr>
+        <!-- Report ID -->
+        <td
+          [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-sm', 'poppins-regular']"
+        >
+          {{ report.report_id }}
+        </td>
+
+        <!-- Title -->
+        <td
+          [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-sm', 'poppins-regular']"
+        >
+          {{ report.title }}
+        </td>
+
+        <!-- Year -->
+        <td
+          [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-sm', 'poppins-regular']"
+        >
+          {{ report.year }}
+        </td>
+
+        <!-- Full Name -->
+        <td
+          [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-sm', 'poppins-regular']"
+        >
+          {{ report.full_name }}
+        </td>
+
+        <!-- File Link -->
+        <td
+          [ngClass]="[rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#eeeeee]', 'text-sm', 'poppins-regular']"
+        >
+          <a
+            [href]="report.file_url"
+            target="_blank"
+            class="text-blue-600 hover:underline"
+            >View PDF</a
+          >
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog
+  [(visible)]="showUploadModal"
+  [modal]="true"
+  [style]="{ width: '30rem' }"
+  header="Upload Annual Report"
+  (onHide)="resetUploadForm()"
+>
+  <form (submit)="uploadReport($event)">
+    <div class="flex flex-col gap-4">
+      <input
+        type="text"
+        placeholder="Report Title"
+        [(ngModel)]="uploadForm.title"
+        name="title"
+        required
+        class="border px-3 py-2 rounded text-sm w-full"
+      />
+
+      <select
+        [(ngModel)]="uploadForm.year"
+        name="year"
+        required
+        class="border px-3 py-2 rounded text-sm w-full"
+      >
+        <option value="" disabled selected>Select Year</option>
+        <option *ngFor="let year of yearOptions" [value]="year">
+          {{ year }}
+        </option>
+      </select>
+
+      <input
+        type="file"
+        (change)="onFileSelected($event)"
+        accept="application/pdf"
+        required
+        class="text-sm"
+      />
+
+      <button
+        type="submit"
+        [disabled]="isUploading"
+        class="bg-green-600 text-white text-sm px-3 py-2 rounded poppins-medium flex items-center justify-center gap-2"
+      >
+        <ng-container *ngIf="!isUploading; else loadingTpl"
+          >Upload Report</ng-container
+        >
+        <ng-template #loadingTpl>
+          <span class="loading loading-spinner loading-sm"></span> Uploading...
+        </ng-template>
+      </button>
+    </div>
+  </form>
+</p-dialog>
